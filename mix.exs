@@ -22,7 +22,8 @@ defmodule Bayes.MixProject do
   defp deps do
     [
       {:ex_doc, "~> 0.27", only: :dev, runtime: false},
-      {:faker, "~> 0.17.0"}
+      {:faker, "~> 0.17.0"},
+      { :statistics, "~> 0.6"}
     ]
   end
 end
