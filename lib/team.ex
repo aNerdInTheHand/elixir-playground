@@ -1,5 +1,13 @@
 defmodule MatchEngine.Team do
-  defstruct [:name, :gk_rating, :def_rating, :mid_rating, :att_rating, :reputation, :manager_rating]
+  defstruct [
+    :name,
+    :gk_rating,
+    :def_rating,
+    :mid_rating,
+    :att_rating,
+    :reputation,
+    :manager_rating
+  ]
 end
 
 # new = %Team{name: "Newcastle", gk_rating: 85, def_rating: 88, mid_rating: 92, att_rating: 90, reputation: 90, manager_rating: 95}
