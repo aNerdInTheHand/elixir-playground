@@ -1,13 +1,12 @@
 defmodule MatchEngine do
   alias Faker
-  alias MatchEngine.Team
-  alias Statistics
+
+  alias MatchEngine.{
+    MatchReport,
+    Team
+  }
 
   def simulate_game(%Team{} = home_team, %Team{} = away_team) do
-    # stats = get_stats(home_team, away_team) |> IO.inspect(charlists: :as_lists, label: "Stats")
-    # skewness = get_away_multiplier(stats) |> IO.inspect(label: "Skewness")
-    # home_ovr = calculate_ovr_rating(home_team) * 1.1 |> IO.inspect(label: "OVR Rating home")
-    # away_ovr = calculate_ovr_rating(away_team) * skewness |> IO.inspect(label: "OVR Rating away")
     home_ovr = calculate_ovr_rating(home_team) * 1.1
     away_ovr = calculate_ovr_rating(away_team)
     ovr_diff = (home_ovr - away_ovr) |> IO.inspect(label: "OVR Diff")
@@ -25,7 +24,7 @@ defmodule MatchEngine do
         end
       end)
 
-    "#{home_team.name} #{home_goals}-#{away_goals} #{away_team.name}"
+    MatchReport.generate_report(home_team, away_team, ovr_diff, home_goals, away_goals)
   end
 
   defp event_occurs?(rating, max \\ 10000), do: Faker.random_between(0, max) <= rating
@@ -58,31 +57,4 @@ defmodule MatchEngine do
     do:
       (team.gk_rating + team.def_rating + team.mid_rating + team.att_rating + team.manager_rating +
          team.reputation) / 6
-
-  # defp get_away_multiplier(stats) do
-  #   skew = Statistics.skew(stats) |> IO.inspect(label: "Skew")
-  #   if skew < 0 do
-  #     (skew / 2) + 1
-  #   else
-  #     skew
-  #   end
-  # end
-
-  # defp get_stats(%Team{} = home_team, %Team{} = away_team) do
-  #   home_values = Map.from_struct(home_team)
-  #   |> Map.delete(:name)
-  #   |> Map.values()
-  #   |> Enum.sort()
-
-  #   IO.inspect(home_values, charlists: :as_lists)
-
-  #   away_values = Map.from_struct(away_team)
-  #   |> Map.delete(:name)
-  #   |> Map.values()
-  #   |> Enum.sort()
-
-  #   IO.inspect(away_values, charlists: :as_lists)
-
-  #   home_values ++ away_values
-  # end
 end
