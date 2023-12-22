@@ -7,8 +7,8 @@ defmodule MatchEngine do
   }
 
   def simulate_game(%Team{} = home_team, %Team{} = away_team) do
-    home_ovr = calculate_ovr_rating(home_team) * 1.1
-    away_ovr = calculate_ovr_rating(away_team)
+    home_ovr = calculate_ovr_rating(home_team) * 1.1 |> IO.inspect(label: "Home OVR")
+    away_ovr = calculate_ovr_rating(away_team) |> IO.inspect(label: "Away OVR")
     ovr_diff = (home_ovr - away_ovr) |> IO.inspect(label: "OVR Diff")
 
     {home_goals, away_goals, _momentum} =
@@ -18,9 +18,16 @@ defmodule MatchEngine do
         momentum = calculate_momentum(momentum, ovr_diff)
 
         if momentum < 1 do
-          maybe_get_goals(home_ovr, home_goals, away_ovr, away_goals, momentum, :home)
+          maybe_get_goals(
+            home_ovr + abs(momentum),
+            home_goals,
+            away_ovr,
+            away_goals,
+            momentum,
+            :home
+          )
         else
-          maybe_get_goals(home_ovr, home_goals, away_ovr, away_goals, momentum, :away)
+          maybe_get_goals(home_ovr, home_goals, away_ovr + momentum, away_goals, momentum, :away)
         end
       end)
 
@@ -29,26 +36,35 @@ defmodule MatchEngine do
 
   defp event_occurs?(rating, max \\ 10000), do: Faker.random_between(0, max) <= rating
 
+  @doc """
+  Change the momentum of a match based on the difference in overall rating between the two teams.
+  The higher rated team will have a greater chance of increasing their momentum.
+  Momentum is a value between -100 and 100, with 0 being neutral.
+  Momentum < 0 means the home team is on top, momentum > 0 means the away team is on top.
+  Maximum momentum is 5, minimum is -5. It is hard for the away team to build momentum.
+  """
   defp calculate_momentum(momentum, ovr_diff) do
     cond do
-      ovr_diff <= 0 and event_occurs?(abs(ovr_diff), 100) -> momentum + 1
-      ovr_diff > 0 and event_occurs?(ovr_diff, 100) -> momentum - 1
+      # home team is stronger
+      ovr_diff >= 0 and event_occurs?(ovr_diff, 200) -> max(-5, momentum - 1)
+      # away team is stronger
+      ovr_diff < 0 and event_occurs?(abs(ovr_diff), 500) -> min(momentum + 1, 5)
       true -> momentum
     end
   end
 
   defp maybe_get_goals(home_ovr, home_goals, away_ovr, away_goals, momentum, :home) do
     cond do
-      event_occurs?(home_ovr) -> {home_goals + 1, away_goals, momentum}
-      event_occurs?(away_ovr) -> {away_goals + 1, home_goals, momentum}
+      event_occurs?(home_ovr) -> {home_goals + 1, away_goals, 0}
+      event_occurs?(away_ovr) -> {home_goals, away_goals + 1, 0}
       true -> {home_goals, away_goals, momentum}
     end
   end
 
   defp maybe_get_goals(home_ovr, home_goals, away_ovr, away_goals, momentum, :away) do
     cond do
-      event_occurs?(away_ovr) -> {away_goals + 1, home_goals, momentum}
-      event_occurs?(home_ovr) -> {home_goals + 1, away_goals, momentum}
+      event_occurs?(away_ovr) -> {home_goals, away_goals + 1, 0}
+      event_occurs?(home_ovr) -> {home_goals + 1, away_goals, 0}
       true -> {home_goals, away_goals, momentum}
     end
   end

@@ -1,65 +1,98 @@
 defmodule MatchEngine.MatchReport do
-  alias MatchEngine.Team
+  alias MatchEngine.{
+    MatchReportSummaries,
+    Team
+  }
 
   def generate_report(
         %Team{} = home_team,
         %Team{} = away_team,
         ovr_diff,
-        0 = _home_goals,
-        0 = _away_goals
-      )
-      when ovr_diff < 10 and ovr_diff > -10 do
-    report = """
-    Match Report
-    ------------
-    #{home_team.name} 0-0 #{away_team.name}
+        home_goals,
+        away_goals
+      ) do
+    winner = determine_winner(home_goals, away_goals) |> IO.inspect(label: "Winner")
+    surprise_factor = determine_surprise_factor(ovr_diff, winner) |> IO.inspect(label: "Surprise Factor")
 
-    There wasn't much to write home about as #{home_team.name} and #{away_team.name} played out a 0-0 draw.
-
-    Although there wasn't much to separate the teams before the match, both teams will be disappointed not to have been able to come away with the win.
-    """
+    report = generate_match_report(home_team.name, away_team.name, home_goals, away_goals, winner, surprise_factor)
 
     IO.puts(report)
   end
 
-  def generate_report(%Team{} = home_team, %Team{} = away_team, _ovr_diff, home_goals, away_goals)
-      when home_goals == away_goals do
-    report = """
-    Match Report
-    ------------
-    #{home_team.name} #{home_goals}-#{away_goals} #{away_team.name}
+  def generate_match_report(home_team, away_team, home_goals, away_goals, winner, surprise_factor) do
+    report_header = print_report_header_and_score(home_team, away_team, home_goals, away_goals)
+    report_body = cond do
+      winner == :draw and surprise_factor == 0 -> MatchReportSummaries.draw_responses(surprise_factor, home_team, away_team, home_goals, away_goals) |> Enum.random()
+      winner == :draw and surprise_factor == 1 -> MatchReportSummaries.draw_responses(surprise_factor, home_team, away_team, home_goals, away_goals) |> Enum.random()
+      winner == :draw and surprise_factor == 2 -> MatchReportSummaries.draw_responses(surprise_factor, home_team, away_team, home_goals, away_goals) |> Enum.random()
+      winner == :draw and surprise_factor == 3 -> MatchReportSummaries.draw_responses(surprise_factor, home_team, away_team, home_goals, away_goals) |> Enum.random()
+      winner == :draw and surprise_factor == 4 -> MatchReportSummaries.draw_responses(surprise_factor, home_team, away_team, home_goals, away_goals) |> Enum.random()
+      winner == :draw and surprise_factor == 5 -> MatchReportSummaries.draw_responses(surprise_factor, home_team, away_team, home_goals, away_goals) |> Enum.random()
+      winner == :home and surprise_factor == 0 -> MatchReportSummaries.home_win_responses(surprise_factor, home_team, away_team, home_goals, away_goals) |> Enum.random()
+      winner == :home and surprise_factor == 1 -> MatchReportSummaries.home_win_responses(surprise_factor, home_team, away_team, home_goals, away_goals) |> Enum.random()
+      winner == :home and surprise_factor == 2 -> MatchReportSummaries.home_win_responses(surprise_factor, home_team, away_team, home_goals, away_goals) |> Enum.random()
+      winner == :home and surprise_factor == 3 -> MatchReportSummaries.home_win_responses(surprise_factor, home_team, away_team, home_goals, away_goals) |> Enum.random()
+      winner == :home and surprise_factor == 4 -> MatchReportSummaries.home_win_responses(surprise_factor, home_team, away_team, home_goals, away_goals) |> Enum.random()
+      winner == :home and surprise_factor == 5 -> MatchReportSummaries.home_win_responses(surprise_factor, home_team, away_team, home_goals, away_goals) |> Enum.random()
+      winner == :away and surprise_factor == 0 -> MatchReportSummaries.away_win_responses(surprise_factor, home_team, away_team, home_goals, away_goals) |> Enum.random()
+      winner == :away and surprise_factor == 1 -> MatchReportSummaries.away_win_responses(surprise_factor, home_team, away_team, home_goals, away_goals) |> Enum.random()
+      winner == :away and surprise_factor == 2 -> MatchReportSummaries.away_win_responses(surprise_factor, home_team, away_team, home_goals, away_goals) |> Enum.random()
+      winner == :away and surprise_factor == 3 -> MatchReportSummaries.away_win_responses(surprise_factor, home_team, away_team, home_goals, away_goals) |> Enum.random()
+      winner == :away and surprise_factor == 4 -> MatchReportSummaries.away_win_responses(surprise_factor, home_team, away_team, home_goals, away_goals) |> Enum.random()
+      winner == :away and surprise_factor == 5 -> MatchReportSummaries.away_win_responses(surprise_factor, home_team, away_team, home_goals, away_goals) |> Enum.random()
+    end
 
-    There was nothing to separate #{home_team.name} and #{away_team.name} as they played out a #{home_goals}-#{away_goals} draw.
-
-    Although there wasn't much to separate the teams before the match, both teams will be disappointed not to have been able to come away with the win.
     """
-
-    IO.puts(report)
+    #{report_header}
+    #{report_body}
+    """
   end
 
-  def generate_report(%Team{} = home_team, %Team{} = away_team, _ovr_diff, home_goals, away_goals)
-      when home_goals > away_goals do
-    report = """
+  defp print_report_header_and_score(home_team, away_team, home_goals, away_goals) do
+    """
     Match Report
     ------------
-    #{home_team.name} #{home_goals}-#{away_goals} #{away_team.name}
-
-    It was a match to remember for #{home_team.name} as they came out on top in a thrilling encounter against #{away_team.name}.
+    #{home_team} #{home_goals}-#{away_goals} #{away_team}
     """
-
-    IO.puts(report)
   end
 
-  def generate_report(%Team{} = home_team, %Team{} = away_team, _ovr_diff, home_goals, away_goals)
-      when away_goals > home_goals do
-    report = """
-    Match Report
-    ------------
-    #{home_team.name} #{home_goals}-#{away_goals} #{away_team.name}
+  defp determine_winner(home_goals, away_goals) when home_goals > away_goals, do: :home
+  defp determine_winner(home_goals, away_goals) when away_goals > home_goals, do: :away
+  defp determine_winner(_home_goals, _away_goals), do: :draw
 
-    It was a match to remember for #{away_team.name} as they came away with the win at #{home_team.name}.
-    """
+  defp determine_surprise_factor(ovr_diff, winner) when winner == :home do
+    IO.inspect("OVR Diff: #{ovr_diff}, Winner: #{winner}, :home")
+    cond do
+      ovr_diff < 20 -> 0
+      ovr_diff < 10 -> 1
+      ovr_diff < 0 -> 2
+      ovr_diff < -10 -> 3
+      ovr_diff < -20 -> 4
+      ovr_diff <= -20 -> 5
+      true -> 0
+    end
+  end
 
-    IO.puts(report)
+  defp determine_surprise_factor(ovr_diff, winner) when winner == :away do
+    IO.inspect("OVR Diff: #{ovr_diff}, Winner: #{winner}, :away")
+    cond do
+      ovr_diff < -20 -> 0
+      ovr_diff < -10 -> 1
+      ovr_diff < 0 -> 2
+      ovr_diff < 10 -> 3
+      ovr_diff < 20 -> 4
+      ovr_diff >= 20 -> 5
+      true -> 0
+    end
+  end
+
+  defp determine_surprise_factor(ovr_diff, winner) when winner == :draw do
+    IO.inspect("OVR Diff: #{ovr_diff}, Winner: #{winner}, :draw")
+    cond do
+      abs(ovr_diff) > 20 -> 5
+      abs(ovr_diff) > 10 -> 2
+      abs(ovr_diff) >= 0 -> 0
+      true -> 0
+    end
   end
 end
