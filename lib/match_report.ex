@@ -63,12 +63,12 @@ defmodule MatchEngine.MatchReport do
   defp determine_surprise_factor(ovr_diff, winner) when winner == :home do
     IO.inspect("OVR Diff: #{ovr_diff}, Winner: #{winner}, :home")
     cond do
-      ovr_diff < 20 -> 0
-      ovr_diff < 10 -> 1
-      ovr_diff < 0 -> 2
-      ovr_diff < -10 -> 3
-      ovr_diff < -20 -> 4
-      ovr_diff <= -20 -> 5
+      ovr_diff > 20 -> 0
+      ovr_diff > -5 -> 1
+      ovr_diff > -15 -> 2
+      ovr_diff > -30 -> 3
+      ovr_diff > -40 -> 4
+      ovr_diff > -60 -> 5
       true -> 0
     end
   end
@@ -77,11 +77,11 @@ defmodule MatchEngine.MatchReport do
     IO.inspect("OVR Diff: #{ovr_diff}, Winner: #{winner}, :away")
     cond do
       ovr_diff < -20 -> 0
-      ovr_diff < -10 -> 1
-      ovr_diff < 0 -> 2
-      ovr_diff < 10 -> 3
-      ovr_diff < 20 -> 4
-      ovr_diff >= 20 -> 5
+      ovr_diff < 0 -> 1
+      ovr_diff < 5 -> 2
+      ovr_diff < 35 -> 3
+      ovr_diff < 50 -> 4
+      ovr_diff <= 65 -> 5
       true -> 0
     end
   end
@@ -89,7 +89,7 @@ defmodule MatchEngine.MatchReport do
   defp determine_surprise_factor(ovr_diff, winner) when winner == :draw do
     IO.inspect("OVR Diff: #{ovr_diff}, Winner: #{winner}, :draw")
     cond do
-      abs(ovr_diff) > 20 -> 5
+      abs(ovr_diff) > 50 -> 5
       abs(ovr_diff) > 10 -> 2
       abs(ovr_diff) >= 0 -> 0
       true -> 0

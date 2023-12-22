@@ -6,6 +6,38 @@ defmodule MatchEngine do
     Team
   }
 
+  @teams [
+    %Team{name: "Newcastle", gk_rating: 85, def_rating: 88, mid_rating: 92, att_rating: 90, reputation: 90, manager_rating: 95},
+    %Team{name: "Sunderland", gk_rating: 70, def_rating: 69, mid_rating: 69, att_rating: 65, reputation: 75, manager_rating: 60},
+    %Team{name: "Manchester United", gk_rating: 80, def_rating: 80, mid_rating: 79, att_rating: 82, reputation: 97, manager_rating: 80},
+    %Team{name: "Manchester City", gk_rating: 94, def_rating: 95, mid_rating: 97, att_rating: 98, reputation: 97, manager_rating: 99},
+    %Team{name: "South Shields", gk_rating: 20, def_rating: 20, mid_rating: 20, att_rating: 20, reputation: 10, manager_rating: 10}
+  ]
+
+  @doc """
+  Simulate a specified number of matches between random teams.
+
+  Prints match reports to the console.
+
+  Returns `:ok`.
+
+  ## Examples
+
+      iex> MatchEngine.simulate_many_random(20)
+  """
+  def simulate_many(%Team{} = home_team, %Team{} = away_team, num_matches \\ 10) do
+    Enum.map(1..num_matches, fn _ ->
+      simulate_game(home_team, away_team)
+    end)
+  end
+
+  def simulate_many_random(num_matches \\ 10) do
+    Enum.map(1..num_matches, fn _ ->
+      [home_team, away_team | _rest] = Enum.shuffle(@teams)
+      simulate_game(home_team, away_team)
+    end)
+  end
+
   def simulate_game(%Team{} = home_team, %Team{} = away_team) do
     home_ovr = calculate_ovr_rating(home_team) * 1.1 |> IO.inspect(label: "Home OVR")
     away_ovr = calculate_ovr_rating(away_team) |> IO.inspect(label: "Away OVR")
