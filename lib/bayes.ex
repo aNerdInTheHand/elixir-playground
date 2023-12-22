@@ -50,7 +50,11 @@ defmodule Bayes do
     }
   end
 
-  def calculate_posterior_probability(%Bayes.Values{prior: x, possibility_if_false: y, possibility_if_true: z}) do
+  def calculate_posterior_probability(%Bayes.Values{
+        prior: x,
+        possibility_if_false: y,
+        possibility_if_true: z
+      }) do
     x * y / (x * y + z * (1 - x))
   end
 
