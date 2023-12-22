@@ -60,12 +60,9 @@ You should get an output like the following:
 
 ```
 iex(623)> MatchEngine.simulate_game(new, manu)
-Home OVR: 99.00000000000001
-Away OVR: 83.0
-OVR Diff: 16.000000000000014
 Winner: :home
-"OVR Diff: 16.000000000000014, Winner: home, :home"
 Surprise Factor: 1
+
 Match Report
 ------------
 Newcastle 3-0 Manchester United
@@ -87,12 +84,9 @@ You should get the output a specified number of times, like so:
 
 ```
 iex(624)> MatchEngine.simulate_many(new, manu, 3)
-Home OVR: 99.00000000000001
-Away OVR: 83.0
-OVR Diff: 16.000000000000014
 Winner: :home
-"OVR Diff: 16.000000000000014, Winner: home, :home"
 Surprise Factor: 1
+
 Match Report
 ------------
 Newcastle 2-1 Manchester United
@@ -100,12 +94,9 @@ Newcastle 2-1 Manchester United
 Newcastle came into the game with Manchester United as slight underdogs but were good value for their 2-1 win.
 
 
-Home OVR: 99.00000000000001
-Away OVR: 83.0
-OVR Diff: 16.000000000000014
 Winner: :draw
-"OVR Diff: 16.000000000000014, Winner: draw, :draw"
 Surprise Factor: 2
+
 Match Report
 ------------
 Newcastle 0-0 Manchester United
@@ -113,12 +104,9 @@ Newcastle 0-0 Manchester United
 There was something of a shock today when Newcastle and Manchester United played out a 0-0 draw.
 
 
-Home OVR: 99.00000000000001
-Away OVR: 83.0
-OVR Diff: 16.000000000000014
 Winner: :home
-"OVR Diff: 16.000000000000014, Winner: home, :home"
 Surprise Factor: 1
+
 Match Report
 ------------
 Newcastle 3-1 Manchester United
@@ -139,44 +127,37 @@ MatchEngine.simulate_many_random(3)
 You should get output similar to the following:
 
 ```
-iex(626)> MatchEngine.simulate_many_random(3)
-Home OVR: 99.00000000000001
-Away OVR: 83.0
-OVR Diff: 16.000000000000014
+iex(652)> MatchEngine.simulate_many_random(3)
 Winner: :home
-"OVR Diff: 16.000000000000014, Winner: home, :home"
 Surprise Factor: 1
+
 Match Report
 ------------
-Newcastle 1-0 Manchester United
+West Ham 2-0 Manchester United
 
-Home advantage proved the difference at Newcastle today, as Newcastle came out on top against a team in Manchester United that many had tipped to win.
+West Ham came into the game with Manchester United as slight underdogs but were good value for their 2-0 win.
 
 
-Home OVR: 106.33333333333334
-Away OVR: 16.666666666666668
-OVR Diff: 89.66666666666667
-Winner: :home
-"OVR Diff: 89.66666666666667, Winner: home, :home"
-Surprise Factor: 0
+Winner: :away
+Surprise Factor: 3
+
 Match Report
 ------------
-Manchester City 1-0 South Shields
+Liverpool 1-2 Newcastle
 
-In a tightly-fought encounter, Manchester City pulled off a 1-0 win at home to South Shields.
+A result few will have predicted as Newcastle went to heavily favoured Newcastle and pulled off a remarkable 1-2 win.
+This is a result that will no doubt have severe repercussions for the Liverpool manager, who was barracked by a disbelieving home support.
+Quite the opposite story for the away manager and his players though, who was serenaded long after the final whistle by a jubilant travelling support.
 
 
-Home OVR: 106.33333333333334
-Away OVR: 83.0
-OVR Diff: 23.333333333333343
-Winner: :home
-"OVR Diff: 23.333333333333343, Winner: home, :home"
-Surprise Factor: 0
+Winner: :draw
+Surprise Factor: 2
+
 Match Report
 ------------
-Manchester City 3-1 Manchester United
+Watford 1-1 Chelsea
 
-In a tightly-fought encounter, Manchester City pulled off a 3-1 win at home to Manchester United.
+There was something of a shock today when Watford and Chelsea played out a 1-1 draw.
 
 
 [:ok, :ok, :ok]

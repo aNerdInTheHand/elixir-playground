@@ -50,6 +50,7 @@ defmodule MatchEngine.MatchReport do
 
   defp print_report_header_and_score(home_team, away_team, home_goals, away_goals) do
     """
+
     Match Report
     ------------
     #{home_team} #{home_goals}-#{away_goals} #{away_team}
@@ -61,7 +62,6 @@ defmodule MatchEngine.MatchReport do
   defp determine_winner(_home_goals, _away_goals), do: :draw
 
   defp determine_surprise_factor(ovr_diff, winner) when winner == :home do
-    IO.inspect("OVR Diff: #{ovr_diff}, Winner: #{winner}, :home")
     cond do
       ovr_diff > 20 -> 0
       ovr_diff > -5 -> 1
@@ -74,7 +74,6 @@ defmodule MatchEngine.MatchReport do
   end
 
   defp determine_surprise_factor(ovr_diff, winner) when winner == :away do
-    IO.inspect("OVR Diff: #{ovr_diff}, Winner: #{winner}, :away")
     cond do
       ovr_diff < -20 -> 0
       ovr_diff < 0 -> 1
@@ -87,7 +86,6 @@ defmodule MatchEngine.MatchReport do
   end
 
   defp determine_surprise_factor(ovr_diff, winner) when winner == :draw do
-    IO.inspect("OVR Diff: #{ovr_diff}, Winner: #{winner}, :draw")
     cond do
       abs(ovr_diff) > 50 -> 5
       abs(ovr_diff) > 10 -> 2
