@@ -2,26 +2,49 @@ defmodule MatchEngine do
   alias Faker
 
   alias MatchEngine.{
+    Helpers,
     MatchReport,
     Team,
     Teams
   }
 
+  @results_accumulator %{
+    home_wins: 0,
+    away_wins: 0,
+    draws: 0,
+    home_goals: 0,
+    away_goals: 0,
+    highest_home_goals: 0,
+    highest_away_goals: 0,
+    biggest_home_win: {0, 0},
+    biggest_away_win: {0, 0},
+    highest_scoring_game: {0, 0},
+    results: []
+  }
+
   @doc """
   Simulate a specified number of matches between random teams.
 
-  Prints match reports to the console.
-
-  Returns `:ok`.
+  Returns statistical overview struct of results.
 
   ## Examples
 
-      iex> MatchEngine.simulate_many_random(20)
+      iex> new = %Team{name: "Newcastle", gk_rating: 85, def_rating: 88, mid_rating: 92, att_rating: 90, reputation: 90, manager_rating: 95}
+      iex> sun = %Team{name: "Sunderland", gk_rating: 70, def_rating: 69, mid_rating: 69, att_rating: 65, reputation: 75, manager_rating: 60}
+      iex> MatchEngine.simulate_many(new, sun, 20)
   """
   def simulate_many(%Team{} = home_team, %Team{} = away_team, num_matches \\ 10) do
-    Enum.map(1..num_matches, fn _ ->
-      simulate_game(home_team, away_team)
-    end)
+    results =
+      Enum.reduce(
+        1..num_matches,
+        @results_accumulator,
+        fn _match, acc ->
+          match_result = simulate_game(home_team, away_team)
+          Helpers.construct_result_struct(match_result, acc)
+        end
+      )
+
+    Helpers.construct_match_series_struct(home_team.name, away_team.name, results, num_matches)
   end
 
   def simulate_many_random(num_matches \\ 10) do
@@ -34,7 +57,7 @@ defmodule MatchEngine do
   def simulate_game(%Team{} = home_team, %Team{} = away_team) do
     home_ovr = calculate_ovr_rating(home_team) * 1.1
     away_ovr = calculate_ovr_rating(away_team)
-    ovr_diff = (home_ovr - away_ovr)
+    ovr_diff = home_ovr - away_ovr
 
     {home_goals, away_goals, _momentum} =
       0..90
@@ -56,7 +79,15 @@ defmodule MatchEngine do
         end
       end)
 
-    MatchReport.generate_report(home_team, away_team, ovr_diff, home_goals, away_goals)
+    report = MatchReport.generate_report(home_team, away_team, ovr_diff, home_goals, away_goals)
+
+    %{
+      home_team: home_team,
+      away_team: away_team,
+      home_goals: home_goals,
+      away_goals: away_goals,
+      report: report
+    }
   end
 
   defp event_occurs?(rating, max \\ 10000), do: Faker.random_between(0, max) <= rating
@@ -68,7 +99,7 @@ defmodule MatchEngine do
   Momentum < 0 means the home team is on top, momentum > 0 means the away team is on top.
   Maximum momentum is 5, minimum is -5. It is hard for the away team to build momentum.
   """
-  defp calculate_momentum(momentum, ovr_diff) do
+  def calculate_momentum(momentum, ovr_diff) do
     cond do
       # home team is stronger
       ovr_diff >= 0 and event_occurs?(ovr_diff, 200) -> max(-5, momentum - 1)
