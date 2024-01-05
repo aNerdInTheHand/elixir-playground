@@ -150,14 +150,14 @@ defmodule MatchEngine.MatchReportSummaries do
       """
     ]
 
-  def away_win_responses(1 = _surprise_factor, home_team, away_team, home_goals, away_goals),
+  def away_win_responses(1 = _surprise_factor, _home_team, _away_team, _home_goals, _away_goals),
     do: [
       """
       In an even contest this afternoon, it was the visitors who came away with the win.
       """
     ]
 
-  def away_win_responses(0 = _surprise_factor, home_team, away_team, home_goals, away_goals),
+  def away_win_responses(0 = _surprise_factor, _home_team, away_team, _home_goals, _away_goals),
     do: [
       """
       The match went to form today as #{away_team} got the win that most people expected.
